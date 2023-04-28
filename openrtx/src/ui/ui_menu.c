@@ -504,6 +504,7 @@ void _ui_drawMenuContacts(ui_state_t* ui_state)
 void _ui_drawMenuGPS()
 {
     char *fix_buf, *type_buf;
+    char typeint_str[5] = { 0 };
     gfx_clearScreen();
     // Print "GPS" on top bar
     gfx_print(layout.top_pos, layout.top_font, TEXT_ALIGN_CENTER,
@@ -533,12 +534,14 @@ void _ui_drawMenuGPS()
                 fix_buf = "PPS";
                 break;
             default:
-                fix_buf = (char*)currentLanguage->error;
+                snprintf(typeint_str, 5, "%d", last_state.gps_data.fix_quality);
+                fix_buf = (char*)typeint_str;
                 break;
         }
 
         switch(last_state.gps_data.fix_type)
         {
+            case 0:
             case 1:
                 type_buf = "";
                 break;
@@ -549,7 +552,8 @@ void _ui_drawMenuGPS()
                 type_buf = "3D";
                 break;
             default:
-                type_buf = (char*)currentLanguage->error;
+                snprintf(typeint_str, 5, "%d", last_state.gps_data.fix_type);
+                type_buf = (char*)typeint_str;
                 break;
         }
         gfx_print(layout.line1_pos, layout.top_font, TEXT_ALIGN_LEFT,
