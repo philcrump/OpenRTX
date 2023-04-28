@@ -56,6 +56,16 @@ void _ui_drawMainTop()
                        layout.status_v_pad};
     gfx_drawBattery(bat_pos, bat_width, bat_height, last_state.charge);
 #endif
+
+    if(last_state.gpsDetected)
+    {
+        uint16_t gps_width = SCREEN_WIDTH / 9;
+        uint16_t gps_height = layout.top_h - (layout.status_v_pad * 2);
+        point_t gps_pos = {SCREEN_WIDTH - bat_width - gps_width - layout.horizontal_pad,
+                        layout.status_v_pad};
+        gfx_drawGPS(gps_pos, gps_width, gps_height, state.settings.gps_enabled, last_state.gps_data.fix_type);
+    }
+
     // Print radio mode on top bar
     switch(last_state.channel.mode)
     {

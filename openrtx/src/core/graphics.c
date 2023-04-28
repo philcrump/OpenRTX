@@ -616,6 +616,122 @@ void gfx_printError(const char *text, fontSize_t size)
     gfx_drawRect(box_start, text_size.x, text_size.y, red, false);
 }
 
+void gfx_drawGPS(point_t start, uint16_t width, uint16_t height,
+                                                    bool gps_enabled, uint8_t fixtype)
+{
+    color_t white =  {255, 255, 255, 255};
+    color_t grey =   { 75,  75,  75, 255};
+    color_t green =  {0,   255, 0  , 255};
+    color_t yellow = {250, 180, 19 , 255};
+    color_t red =    {255, 0,   0  , 255};
+    point_t _point;
+
+    uint8_t icon_point_count = 39;
+    point_t icon[39] = {
+        { 1, 11 },
+        { 1, 12 },
+        { 1, 13 },
+        { 1, 14 },
+        { 1, 15 },
+        { 2, 10 },
+        { 2, 15 },
+        { 2, 16 },
+        { 2, 17 },
+        { 3, 10 },
+        { 3, 17 },
+        { 3, 18 },
+        { 4, 10 },
+        { 4, 11 },
+        { 4, 18 },
+        { 4, 19 },
+        { 5, 11 },
+        { 5, 12 },
+        { 5, 19 },
+        { 6, 12 },
+        { 6, 13 },
+        { 6, 19 },
+        { 6, 20 },
+        { 7, 13 },
+        { 7, 14 },
+        { 7, 20 },
+        { 8, 13 },
+        { 8, 14 },
+        { 8, 15 },
+        { 8, 20 },
+        { 9, 15 },
+        { 9, 16 },
+        { 9, 20 },
+        { 10, 16 },
+        { 10, 17 },
+        { 10, 20 },
+        { 11, 17 },
+        { 11, 18 },
+        { 11, 19 }
+    };
+
+    color_t *_color_ptr = (gps_enabled ? &white : &grey);
+    for(uint8_t i = 0; i<icon_point_count; i++)
+    {
+        _point.x = start.x + icon[i].x;
+        _point.y = start.y + icon[i].y;
+        gfx_setPixel(_point, *_color_ptr);
+    }
+
+    if(gps_enabled)
+    {
+        switch(fixtype)
+        {
+            case 3:
+                _color_ptr = &green;
+                break;
+            case 2:
+                _color_ptr = &yellow;
+                break;
+            default:
+                _color_ptr = &red;
+                break;
+        }
+
+        uint8_t signal_2_point_count = 5;
+        point_t signal_2[5] = {
+            { 8, 8 },
+            { 7, 7 },
+            { 6, 6 },
+            { 5, 2 },
+            { 4, 1 }
+        };
+        uint8_t signal_1_point_count = 5;
+        point_t signal_1[5] = {
+            { 6, 8 },
+            { 5, 7 },
+            { 4, 6 },
+            { 3, 2 },
+            { 2, 1 }
+        };
+
+        switch(fixtype)
+        {
+            case 3:
+                for(uint8_t i = 0; i<signal_2_point_count; i++)
+                {
+                    _point.x = start.x + signal_2[i].x;
+                    _point.y = start.y + signal_2[i].y;
+                    gfx_setPixel(_point, *_color_ptr);
+                }
+                // falls through
+            case 2:
+                for(uint8_t i = 0; i<signal_1_point_count; i++)
+                {
+                    _point.x = start.x + signal_1[i].x;
+                    _point.y = start.y + signal_1[i].y;
+                    gfx_setPixel(_point, *_color_ptr);
+                }
+                break;
+        }
+    }
+
+}
+
 /*
  * Function to draw battery of arbitrary size
  * starting coordinates are relative to the top left point.
